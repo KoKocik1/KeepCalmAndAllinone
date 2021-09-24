@@ -14,11 +14,12 @@ namespace KeepCalmAndAllinone
         //Odczyt danych
         MySqlConnection conn;
 
+
         //public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond);
         DateTime poczatek = new DateTime(2021, 9, 21, 8, 03, 0, 0);
         DateTime koniec = new DateTime(2021, 9, 21, 18, 16, 0, 0);
 
-        double kursSatCorection = 4.44;
+        double poprawkaSat = 4.44, poprawkaAhrs = 0.86;
         double baseX=0.07, baseY=-0.35, rovX=0.09, rovY=0.67;
 
         private object Lock = new object();
@@ -27,7 +28,7 @@ namespace KeepCalmAndAllinone
         //czy korzystac z przedzialu poczatek, koniec - w innym przypadku analiza calej bazy
         bool przedzial = false;
 
-        double poprawkaSat = 4.44, poprawkaAhrs = 0.86;
+
        
         static void Main(string[] args)
         {
@@ -70,14 +71,12 @@ namespace KeepCalmAndAllinone
                     if (powtorzenie == 0)
                     {
                         dvlPosition = FindElementsByTime.szukajPozycjiDvlPosition((DateTime)point.local_time, odczytyDVL_positionA);
-
-                            dvl_Position_Water = FindElementsByTime.szukajPozycjiDvlPositionW((DateTime)point.local_time, odczytyDVL_positionWaterA);
+                        dvl_Position_Water = FindElementsByTime.szukajPozycjiDvlPositionW((DateTime)point.local_time, odczytyDVL_positionWaterA);
                     }
                     else
                     {
                         dvlPosition = FindElementsByTime.szukajPozycjiDvlPosition((DateTime)point.local_time, odczytyDVL_positionS);
-                            dvl_Position_Water = FindElementsByTime.szukajPozycjiDvlPositionW((DateTime)point.local_time, odczytyDVL_positionWaterS);
-
+                        dvl_Position_Water = FindElementsByTime.szukajPozycjiDvlPositionW((DateTime)point.local_time, odczytyDVL_positionWaterS);
                     }
 
                     dvl_Water = FindElementsByTime.szukajPozycjiWater((DateTime)point.local_time, odczytyDVL_water);
@@ -87,12 +86,18 @@ namespace KeepCalmAndAllinone
 
                     Console.WriteLine(licznik++);
 
-                    //Zabezpiecznie na czas
-                    if (Math.Abs(((DateTime)gpsB.local_time).Subtract((DateTime)gpsR.local_time).TotalMilliseconds) < 1000)
+                    if (gpsB.lat != null || gpsR.lat != null)
                     {
-                        satHeading = GeoCalc.calcSatHeading(gpsB, gpsR, geometricCorrection);
-                        satHeading -= kursSatCorection;
+                        //Zabezpiecznie na czas
+                        if (Math.Abs(((DateTime)gpsB.local_time).Subtract((DateTime)gpsR.local_time).TotalMilliseconds) < 1000)
+                        {
+                            satHeading = GeoCalc.calcSatHeading(gpsB, gpsR, geometricCorrection);
+                            satHeading -= poprawkaSat;
+                        }
                     }
+                    else
+                        satHeading = 0;
+
                     lock (Lock)
                     {
                         dbWriter.AddEntry(dvl_Water, dvl_Position_Water, dvlPosition, point, ahrs, gpsB, gpsR, satHeading, poprawkaSat, poprawkaAhrs);

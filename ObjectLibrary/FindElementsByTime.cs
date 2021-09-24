@@ -12,10 +12,13 @@ namespace PartyMaker
         public static gps szukajPozycjiGPS(DateTime czas, List<gps> odczytyGPS)
         {
             double czasDouble = czas.ToOADate();
-            gps wynik = odczytyGPS.ElementAt(0);
+            gps wynik = new gps();
+
+            if (odczytyGPS.Count != 0)
+            wynik = odczytyGPS.ElementAt(0);
 
 
-            if (odczytyGPS.Count == 0)
+            if (odczytyGPS.Count == 0 || Convert.ToDateTime(wynik.local_time).ToOADate() > czasDouble)
             {
                 return new gps
                 {
