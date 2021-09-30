@@ -188,4 +188,13 @@ namespace PartyMaker
         public Nullable<double> temperature { get; set; }
 
     }
+    public class initbark
+    {
+        public string Nazwa { get; set; }
+        public string Rola { get; set; }
+        public string Identyfikator { get; set; }
+        public Nullable<double> XCoordinate { get; set; }
+        public Nullable<double> YCoordinate { get; set; }
+        public Nullable<double> ZCoordinate { get; set; }
+    }
 }

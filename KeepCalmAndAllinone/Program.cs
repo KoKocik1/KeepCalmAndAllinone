@@ -14,21 +14,14 @@ namespace KeepCalmAndAllinone
         //Odczyt danych
         MySqlConnection conn;
 
-
         //public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond);
-        DateTime poczatek = new DateTime(2021, 9, 21, 8, 03, 0, 0);
-        DateTime koniec = new DateTime(2021, 9, 21, 18, 16, 0, 0);
+        DateTime poczatek = new DateTime(2021, 9, 29, 8, 0, 0, 0);
+        DateTime koniec = new DateTime(2021, 9, 29, 20, 0, 0, 0);
 
-        double poprawkaSat = 4.44, poprawkaAhrs = 0.86;
-        double baseX=0.07, baseY=-0.35, rovX=0.09, rovY=0.67;
+        double poprawkaSat = 0.561, poprawkaAhrs = -4.341;
+        double baseX=0.23, baseY=0.0, rovX=0.0, rovY=0.85;
 
         private object Lock = new object();
-
-        //flagi
-        //czy korzystac z przedzialu poczatek, koniec - w innym przypadku analiza calej bazy
-        bool przedzial = false;
-
-
        
         static void Main(string[] args)
         {

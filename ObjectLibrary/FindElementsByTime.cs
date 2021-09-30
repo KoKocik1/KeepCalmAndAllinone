@@ -201,7 +201,125 @@ namespace PartyMaker
             }
 
             return wynik;
+        }     
+    }
+    public static class FindElementsByTimePostProcessing
+    {
+        public static bool LiczLocal_flag { set; get; }
+
+        //Szukanie najbliższej pozycji z gps
+        public static gps szukajPozycjiGPS(DateTime czas, List<gps> odczytyGPS)
+        {
+
+            double czasDouble = czas.ToOADate();
+            gps wynik = odczytyGPS.ElementAt(0);
+
+            foreach (gps odczyt in odczytyGPS)
+            {
+                if (LiczLocal_flag)
+                {
+                    var warunek = Convert.ToDateTime(odczyt.local_time).ToOADate();
+                    if (warunek > czasDouble)
+                    {
+                        if (warunek - czasDouble < czasDouble - Convert.ToDateTime(wynik.local_time).ToOADate())
+                        {
+                            wynik = odczyt;
+                        }
+
+                        break;
+                    }
+                    wynik = odczyt;
+                }
+                else
+                {
+                    var warunek = Convert.ToDateTime(odczyt.device_time).ToOADate();
+                    if (warunek > czasDouble)
+                    {
+                        if (warunek - czasDouble < czasDouble - Convert.ToDateTime(wynik.device_time).ToOADate())
+                        {
+                            wynik = odczyt;
+                        }
+
+                        break;
+                    }
+                    wynik = odczyt;
+                }
+            }
+
+            return wynik;
+
         }
-        
+        //szukanie najblizszej pozycji ahrs
+        public static quat_ahrs szukajPozycjiAhrs(DateTime czas, List<quat_ahrs> odczytyAhrs)
+        {
+
+            double czasDouble = czas.ToOADate();
+            quat_ahrs wynik = odczytyAhrs.ElementAt(0);
+
+            foreach (quat_ahrs odczyt in odczytyAhrs)
+            {
+
+                var warunek = Convert.ToDateTime(odczyt.time).ToOADate();
+                if (warunek > czasDouble)
+                {
+                    if (warunek - czasDouble < czasDouble - Convert.ToDateTime(wynik.time).ToOADate())
+                    {
+                        wynik = odczyt;
+                    }
+
+                    break;
+                }
+
+                wynik = odczyt;
+            }
+
+            return wynik;
+
+        }
+        //Szukanie najbliższej pozycji z DVL water
+        public static dvl_position_water szukajPozycjiWater(DateTime czas, List<dvl_position_water> wynikiWater, double limit)
+        {
+            dvl_position_water wynik = null;
+            if (wynikiWater.Count != 0)
+            {
+                double czasDouble = czas.ToOADate();
+                 wynik= wynikiWater.ElementAt(0);
+
+                foreach (dvl_position_water odczyt in wynikiWater)
+                {
+                    if (LiczLocal_flag)
+                    {
+                        var warunek = Convert.ToDateTime(odczyt.local_time).ToOADate();
+                        if (warunek > czasDouble)
+                        {
+                            if (warunek - czasDouble < czasDouble - Convert.ToDateTime(wynik.local_time).ToOADate())
+                            {
+                                wynik = odczyt;
+                            }
+
+                            break;
+                        }
+                        wynik = odczyt;
+                    }
+                    else
+                    {
+                        var warunek = Convert.ToDateTime(odczyt.device_time).ToOADate();
+                        if (warunek > czasDouble)
+                        {
+                            if (warunek - czasDouble < czasDouble - Convert.ToDateTime(wynik.device_time).ToOADate())
+                            {
+                                wynik = odczyt;
+                            }
+
+                            break;
+                        }
+                        wynik = odczyt;
+                    }
+                }
+            }
+
+            return wynik;
+
+        }
     }
 }
